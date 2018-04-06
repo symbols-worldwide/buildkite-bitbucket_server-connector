@@ -1,0 +1,9 @@
+steps:
+  - command:  apk add --update alpine-sdk && bundle install && bundle exec rake rubocop
+    name: rubocop
+    plugins:
+      docker:
+        image: symbols/minimal-ruby:2.5.1
+        always-pull: true
+    agents:
+      - linux: true

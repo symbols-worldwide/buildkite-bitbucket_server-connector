@@ -1,0 +1,22 @@
+buildkite:
+  # number of seconds between polls
+  polling_interval: <%= ENV['BUILDKITE_POLLING_INTERVAL'] || 60 %>
+  # Buildkite API token
+  token: <%= ENV['BUILDKITE_TOKEN'] %>
+  # Filter for builds created/updated within the last x hours
+  update_window: <%= ENV['BUILDKITE_UPDATE_WINDOW'] || 8 %>
+  # the organization to poll
+  organization: <%= ENV['BUILDKITE_ORGANIZATION'] %>
+
+bitbucket:
+  # username and password with permission to write to the builds
+  username: <%= ENV['BITBUCKET_USERNAME'] %>
+  password: <%= ENV['BITBUCKET_PASSWORD'] %>
+  # URL of bitbucket server
+  url: <%= ENV['BITBUCKET_URL'] %>
+
+# Dead Man's Snitch - reports success to the snitch ID on a successful update
+dms:
+  snitch_id: <%= ENV['DMS_SNITCH_ID'] %>
+
+log_level: <%= ENV['MONITOR_LOG_LEVEL'] || 'WARN' %>
