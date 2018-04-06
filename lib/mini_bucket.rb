@@ -34,12 +34,11 @@ class MiniBucket
             "commits/#{commit}",
             payload: {
               state: state,
-              key: key,
-              name: options[:name].to_s,
-              url: options[:url].to_s,
-              description: options[:description].to_s
-            }.to_json,
+              key: key
+            }.merge(options).to_json,
             api: 'build-status')
+  rescue StandardError => e
+    @log.warn("Failed to write build status to Bitbucket. Error: #{e}")
   end
 
   private
