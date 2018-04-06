@@ -16,7 +16,6 @@ class BkMonitor
     @buildkite = MiniKite.new(config['buildkite'], log)
   end
 
-
   # runs a loop to monitor buildkite for new builds and report to bitbucket
   def start
     if @config['dms']['snitch_id'].to_s == ''
@@ -76,7 +75,7 @@ class BkMonitor
   def apply_build_status_from_pipeline(pipeline)
     %w[INPROGRESS SUCCESSFUL FAILED].each do |state|
       @buildkite.builds_in_state(pipeline, state).each do |build|
-        apply_build_state_for_build(build)
+        apply_build_state_for_build(build, state)
       end
     end
   rescue StandardError => e
@@ -84,7 +83,7 @@ class BkMonitor
   end
 
   # write the status of a build to bitbucket
-  def apply_build_state_for_build(build)
+  def apply_build_state_for_build(build, state)
     @log.info("Setting build state #{state} for #{build[:commit]}")
     @bitbucket.set_build_state_for_commit(build[:commit],
                                           state,

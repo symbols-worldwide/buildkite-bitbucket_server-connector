@@ -5,24 +5,28 @@ DIR = File.expand_path('.', __dir__)
 lib = File.join(DIR, 'lib')
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
-require 'yaml'
 require 'bk_monitor'
 require 'app_logger'
-require 'erb'
+require 'app_settings'
 
 log = AppLogger.new(STDOUT)
 
 RestClient.log = log
 
-erb = ERB.new(File.read('config.yml'))
-config = YAML.safe_load(erb.result)
+config = AppSettings.load_settings
 
-log.level = config['log_level'] || 'DEBUG'
+log.level = config['log_level'] || 'WARN'
 
-begin
-  monitor = BkMonitor.new(config)
-  monitor.log = log
-  monitor.start
-rescue StandardError => e
-  log.exception(e, true)
+if config.valid?
+  begin
+    monitor = BkMonitor.new(config)
+    monitor.log = log
+
+    monitor.start
+  rescue StandardError => e
+    log.exception(e, true)
+  end
+else
+  config.print_missing_settings_warning
+  exit 1
 end
