@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-DIR = File.expand_path('.', __dir__)
+DIR = File.expand_path('..', __dir__)
 lib = File.join(DIR, 'lib')
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
