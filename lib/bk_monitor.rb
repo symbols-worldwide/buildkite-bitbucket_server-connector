@@ -89,7 +89,7 @@ class BkMonitor
 
     return if existing_state == state
 
-    @log.info("Setting build state #{state} for #{build[:commit]}")
+    @log.warn("Setting build state #{state} for #{build[:commit]}")
     @bitbucket.set_build_state_for_commit(build[:commit],
                                           state,
                                           build[:pipeline][:id],
