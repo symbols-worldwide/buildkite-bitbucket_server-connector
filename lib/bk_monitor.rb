@@ -84,6 +84,11 @@ class BkMonitor
 
   # write the status of a build to bitbucket
   def apply_build_state_for_build(build, state)
+    existing_state = @bitbucket.build_state_for_commit(build[:commit],
+                                                       build[:pipeline][:id])
+
+    return if existing_state == state
+
     @log.info("Setting build state #{state} for #{build[:commit]}")
     @bitbucket.set_build_state_for_commit(build[:commit],
                                           state,

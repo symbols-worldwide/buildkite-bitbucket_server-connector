@@ -41,6 +41,15 @@ class MiniBucket
     @log.warn("Failed to write build status to Bitbucket. Error: #{e}")
   end
 
+  def build_state_for_commit(commit, key)
+    build = request(:get,
+                    "commits/#{commit}",
+                    api: 'build-status').find { |b| b[:key] == key }
+    build ? build[:state] : nil
+  rescue StandardError => e
+    @log.warn("Failed to get build status from Bitbucket. Error: #{e}")
+  end
+
   private
 
   def request(method, url, options = {})
