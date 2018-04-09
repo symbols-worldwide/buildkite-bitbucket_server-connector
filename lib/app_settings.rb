@@ -30,8 +30,8 @@ module AppSettings
 
   def required_settings
     [
-      %w[buildkite polling_interval],
-      %w[buildkite update_window],
+      %w[monitor polling_interval],
+      %w[monitor initial_search_time],
       %w[buildkite token],
       %w[buildkite organization],
       %w[bitbucket username],

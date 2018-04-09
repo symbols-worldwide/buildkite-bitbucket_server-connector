@@ -15,7 +15,7 @@ RestClient.log = log
 
 config = AppSettings.load_settings
 
-log.level = config['log_level'] || 'WARN'
+log.level = config['monitor']['log_level'] || 'WARN'
 
 if config.valid?
   begin

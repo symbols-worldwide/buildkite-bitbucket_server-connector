@@ -10,27 +10,29 @@ class BkMonitor
   attr_accessor :log
 
   def initialize(config)
-    @config = config
     @log = Logger.new(STDOUT)
     @bitbucket = MiniBucket.new(config['bitbucket'], log)
     @buildkite = MiniKite.new(config['buildkite'], log)
+    @config = config['monitor']
+    @snitch = config['dms']['snitch_id'].to_s
   end
 
   # runs a loop to monitor buildkite for new builds and report to bitbucket
   def start
-    if @config['dms']['snitch_id'].to_s == ''
-      @log.warn 'Not snitching due to missing snitch id'
-    end
+    @log.warn 'Not snitching due to missing snitch id' if @snitch == ''
+
     loop do
       report_builds
       snitch
 
-      sleep @config['buildkite']['polling_interval'].to_i
+      sleep @config['polling_interval'].to_i
     end
   end
 
   # reports buildkite builds to bitbucket
   def report_builds
+    t = Time.now
+
     matched_pipelines.each_pair do |pipeline, repo|
       @log.info(
         "Processing builds for pipeline: #{pipeline} in repo #{repo[:name]}"
@@ -38,6 +40,9 @@ class BkMonitor
 
       apply_build_status_from_pipeline(pipeline)
     end
+
+    # reset within 1 cycle in case of clock drift
+    @time_since = t - @config['polling_interval'].to_i
   end
 
   private
@@ -73,10 +78,11 @@ class BkMonitor
 
   # write the status of builds from `pipeline` to bitbucket
   def apply_build_status_from_pipeline(pipeline)
-    %w[INPROGRESS SUCCESSFUL FAILED].each do |state|
-      @buildkite.builds_in_state(pipeline, state).each do |build|
-        apply_build_state_for_build(build, state)
-      end
+    @buildkite.builds_since(pipeline, search_start_time).each do |build|
+      apply_build_state_for_build(
+        build,
+        bitbucket_state_for_buildkite_build(build)
+      )
     end
   rescue StandardError => e
     @log.exception(e)
@@ -105,7 +111,21 @@ class BkMonitor
   end
 
   def snitch
-    snitch_id = @config['dms']['snitch_id'].to_s
-    Snitcher.snitch(snitch_id) if snitch_id != ''
+    Snitcher.snitch(@snitch) if @snitch != ''
+  end
+
+  def bitbucket_state_for_buildkite_build(build)
+    case build[:state]
+    when 'running', 'scheduled', 'blocked', 'canceling'
+      'INPROGRESS'
+    when 'failed', 'canceled'
+      'FAILED'
+    when 'passed'
+      'SUCCESSFUL'
+    end
+  end
+
+  def search_start_time
+    @time_since || Time.now - @config['initial_search_time'].to_i * 60 * 60
   end
 end
