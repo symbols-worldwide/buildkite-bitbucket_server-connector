@@ -33,13 +33,7 @@ class BkMonitor
   def report_builds
     t = Time.now
 
-    matched_pipelines.each_pair do |pipeline, repo|
-      @log.info(
-        "Processing builds for pipeline: #{pipeline} in repo #{repo[:name]}"
-      )
-
-      apply_build_status_from_pipeline(pipeline)
-    end
+    apply_build_statuses
 
     # reset within 1 cycle in case of clock drift
     @time_since = t - @config['polling_interval'].to_i
@@ -77,8 +71,8 @@ class BkMonitor
   end
 
   # write the status of builds from `pipeline` to bitbucket
-  def apply_build_status_from_pipeline(pipeline)
-    @buildkite.builds_since(pipeline, search_start_time).each do |build|
+  def apply_build_statuses
+    @buildkite.all_builds_since(search_start_time).each do |build|
       apply_build_state_for_build(
         build,
         bitbucket_state_for_buildkite_build(build)

@@ -17,6 +17,14 @@ class MiniKite
     @buildkite.pipelines(@config['organization'])
   end
 
+  def all_builds_since(time)
+    @log.debug("Getting all builds since #{time.iso8601}")
+    @buildkite.organization_builds(@config['organization'],
+                                   created_from: time.iso8601) +
+      @buildkite.organization_builds(@config['organization'],
+                                     finished_from: time.iso8601)
+  end
+
   def builds_since(pipeline, time)
     @log.debug("Getting builds for #{pipeline} since #{time.iso8601}")
     @buildkite.pipeline_builds(@config['organization'], pipeline,
