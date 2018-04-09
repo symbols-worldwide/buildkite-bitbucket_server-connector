@@ -2,7 +2,9 @@ FROM symbols/minimal-ruby:2.5.1
 
 MAINTAINER Simon Detheridge <simon@widgit.com>
 
-COPY . /app
+COPY Gemfile Gemfile.lock config.yml /app/
+COPY lib /app/lib
+COPY bin /app/bin
 
 RUN apk add --update --no-cache build-base && \
     cd /app && \
