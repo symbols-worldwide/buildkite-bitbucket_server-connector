@@ -38,9 +38,8 @@ class MiniBucket
             }.merge(options).to_json,
             api: 'build-status')
   rescue StandardError => e
-    @log.warn("Failed to write build status to Bitbucket for #{commit}. " +
+    @log.warn("Failed to write build status to Bitbucket for #{commit}. " \
       "Error: #{e}")
-    @log.debug("State: #{state}, key: #{key}")
   end
 
   def build_state_for_commit(commit, key)
