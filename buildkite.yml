@@ -11,13 +11,13 @@ steps:
   - command: |
       if [ "x$$BUILDKITE_PULL_REQUEST" == "xfalse" ]; then
         docker login -u=$$DOCKERHUB_USERNAME -p=$$DOCKERHUB_PASSWORD
-        docker build --pull --rm -t symbols/buildkite-bitbucket_server-monitor:$$BUILDKITE_BRANCH .
+        docker build --pull --rm -t symbols/buildkite-bitbucket_server-connector:$$BUILDKITE_BRANCH .
         if [ "x$$?" == "x0" ]; then
-          docker push symbols/buildkite-bitbucket_server-monitor:$$BUILDKITE_BRANCH
+          docker push symbols/buildkite-bitbucket_server-connector:$$BUILDKITE_BRANCH
           if [ "x$$BUILDKITE_BRANCH" == "xmaster" ]; then
-            docker tag symbols/buildkite-bitbucket_server-monitor:$$BUILDKITE_BRANCH \
-              symbols/buildkite-bitbucket_server-monitor:latest
-            docker push symbols/buildkite-bitbucket_server-monitor:latest
+            docker tag symbols/buildkite-bitbucket_server-connector:$$BUILDKITE_BRANCH \
+              symbols/buildkite-bitbucket_server-connector:latest
+            docker push symbols/buildkite-bitbucket_server-connector:latest
           fi
         fi
       else
