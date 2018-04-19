@@ -28,11 +28,11 @@ You'll need the following things:
 The simplest way is via Docker:
 
 ```
-docker run -E BUILDKITE_API_TOKEN=asdf1234 \
-           -E BUILDKITE_ORGANIZATION=acme-inc \
-           -E BITBUCKET_USERNAME=roooot \
-           -E BITBUCKET_PASSWORD=hunter2 \
-           -E BITBUCKET_URL=https://git.acme.com/ \
+docker run -e BUILDKITE_API_TOKEN=asdf1234 \
+           -e BUILDKITE_ORGANIZATION=acme-inc \
+           -e BITBUCKET_USERNAME=roooot \
+           -e BITBUCKET_PASSWORD=hunter2 \
+           -e BITBUCKET_URL=https://git.acme.com/ \
            symbols/buildkite-bitbucket_server-connector
 ```
 
