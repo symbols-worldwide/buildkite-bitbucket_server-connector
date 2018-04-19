@@ -6,7 +6,7 @@ steps:
         image: symbols/minimal-ruby:2.5.1
         always-pull: true
     agents:
-      - linux: true
+      linux: true
   - wait
   - command: |
       if [ "x$$BUILDKITE_PULL_REQUEST" == "xfalse" ]; then
@@ -26,4 +26,4 @@ steps:
       docker images -q --filter "dangling=true" | xargs -r docker rmi || true
     label: docker build
     agents:
-      - linux: true
+      linux: true
